@@ -22,6 +22,7 @@ function Window.new(config)
     MainFrame.Position = UDim2.new(0.226, 0, 0.298, 0)
     MainFrame.Size = UDim2.new(0, 698, 0, 325)
 
+
     local UICorner = Instance.new("UICorner")
     UICorner.CornerRadius = UDim.new(0, 4)
     UICorner.Parent = MainFrame
@@ -53,6 +54,15 @@ function Window.new(config)
     TopBar.BorderSizePixel = 0
     TopBar.Size = UDim2.new(1, 0, 0, 31)
 
+    local CoverFrame = Instance.new("Frame")
+    CoverFrame.Name = "CoverFrame"
+    CoverFrame.Parent = TopBar
+    CoverFrame.BackgroundColor3 = Color3.fromRGB(50, 59, 127)
+    CoverFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    CoverFrame.BorderSizePixel = 0
+    CoverFrame.Position = UDim2.new(-4.37214585e-05, 0, 1, 0)
+    CoverFrame.Size = UDim2.new(0, 698, 0, -18)
+
     local TopCorner = Instance.new("UICorner")
     TopCorner.CornerRadius = UDim.new(0, 4)
     TopCorner.Parent = TopBar
@@ -79,6 +89,8 @@ function Window.new(config)
     Tabs.Position = UDim2.new(0, 0, 0, 31)
     Tabs.Size = UDim2.new(1, 0, 0, 32)
 
+
+
     local SearchTab = Instance.new("Frame")
     SearchTab.Name = "SearchTab"
     SearchTab.Parent = Tabs
@@ -87,6 +99,42 @@ function Window.new(config)
     SearchTab.BorderSizePixel = 0
     SearchTab.Position = UDim2.new(0.0232101493, 0, 0.135858536, 0)
     SearchTab.Size = UDim2.new(0, 135, 0, 23)
+
+    local SearchBox = Instance.new("TextBox")
+    SearchBox.Name = "SearchBox"
+    SearchBox.Parent = SearchTab
+    SearchBox.Active = false
+    SearchBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    SearchBox.BackgroundTransparency = 1.000
+    SearchBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    SearchBox.BorderSizePixel = 0
+    SearchBox.Position = UDim2.new(0.239335805, 0, 0, 0)
+    SearchBox.Selectable = false
+    SearchBox.Size = UDim2.new(0.760664225, 0, 1, 0)
+    SearchBox.Font = Enum.Font.Cartoon
+    SearchBox.Text = "Search..."
+    SearchBox.PlaceholderText = "Search..."
+    SearchBox.PlaceholderColor3 = Color3.fromRGB(255, 255, 255)
+    SearchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    SearchBox.TextScaled = true
+    SearchBox.TextSize = 14.000
+    SearchBox.TextStrokeColor3 = Color3.fromRGB(255, 255, 255)
+    SearchBox.TextWrapped = true
+
+    local SearchIcon = Instance.new("ImageLabel")
+    SearchIcon.Name = "SearchIcon"
+    SearchIcon.Parent = SearchTab
+    SearchIcon.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    SearchIcon.BackgroundTransparency = 1.000
+    SearchIcon.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    SearchIcon.BorderSizePixel = 0
+    SearchIcon.Position = UDim2.new(0.0689655468, 0, 0, 0)
+    SearchIcon.Size = UDim2.new(0.174999997, 0, 1, 0)
+    SearchIcon.Image = "rbxassetid://10734943674"
+
+    local SearchTabUICorner = Instance.new("UICorner")
+    SearchTabUICorner.CornerRadius = UDim.new(0, 4)
+    SearchTabUICorner.Parent = SearchTab
 
     local Divider = Instance.new("Frame")
     Divider.Name = "Divider"

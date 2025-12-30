@@ -3,6 +3,9 @@ Library.__index = Library
 
 local Window = __require("components.window")
 local Tab = __require("components.tab")
+local Lucide = __require("icons")
+
+Library.Icons = Lucide
 
 function Library:CreateWindow(config)
     config = config or {}
@@ -13,8 +16,8 @@ function Library:CreateWindow(config)
 
     local api = {}
 
-    function api:CreateTab(name)
-        return Tab.new(window, name)
+    function api:CreateTab(name, icon)
+        return Tab.new(window, name, icon)
     end
 
     function api:Destroy()
