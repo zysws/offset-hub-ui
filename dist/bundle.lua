@@ -65,6 +65,7 @@ function Window.new(config)
     DropShadow.Size = UDim2.new(1, 47, 1, 47)
     DropShadow.BackgroundTransparency = 1
     DropShadow.Image = "rbxassetid://6014261993"
+    DropShadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
     DropShadow.ImageTransparency = 0.5
     DropShadow.ScaleType = Enum.ScaleType.Slice
     DropShadow.SliceCenter = Rect.new(49, 49, 450, 450)
@@ -102,6 +103,24 @@ function Window.new(config)
     Tabs.BorderSizePixel = 0
     Tabs.Position = UDim2.new(0, 0, 0, 31)
     Tabs.Size = UDim2.new(1, 0, 0, 32)
+
+    local SearchTab = Instance.new("Frame")
+    SearchTab.Name = "SearchTab"
+    SearchTab.Parent = Tabs
+    SearchTab.BackgroundColor3 = Color3.fromRGB(90, 90, 90)
+    SearchTab.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    SearchTab.BorderSizePixel = 0
+    SearchTab.Position = UDim2.new(0.0232101493, 0, 0.135858536, 0)
+    SearchTab.Size = UDim2.new(0, 135, 0, 23)
+
+    local Divider = Instance.new("Frame")
+    Divider.Name = "Divider"
+    Divider.Parent = Tabs
+    Divider.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Divider.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    Divider.BorderSizePixel = 0
+    Divider.Position = UDim2.new(0.23381187, 0, 0.0265865326, 0)
+    Divider.Size = UDim2.new(0, -2, 0, 30)
 
     local TabsLayoutFrame = Instance.new("Frame")
     TabsLayoutFrame.Parent = Tabs
@@ -143,7 +162,7 @@ local Library = {}
 Library.__index = Library
 
 local Window = __require("components.window")
---local Tab = __require("components.tab")
+local Tab = __require("components.tab")
 
 function Library:CreateWindow(config)
     config = config or {}
