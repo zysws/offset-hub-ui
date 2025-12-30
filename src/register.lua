@@ -1,8 +1,8 @@
 local Library = {}
 Library.__index = Library
 
-local Window = require(script.components.window)
-local Tab = require(script.components.tab)
+local Window = __require("window")
+local Tab = __require("tab")
 
 function Library:CreateWindow(config)
     config = config or {}

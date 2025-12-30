@@ -6,21 +6,23 @@ local function __require(name)
     if __cache[name] then
         return __cache[name]
     end
+
     local fn = __modules[name]
     if not fn then
-        error("Module not found: " .. name)
+        error("Module not found: " .. name, 2)
     end
+
     local result = fn()
     __cache[name] = result
     return result
 end
 
-__modules["components/checkbox"] = function()
+__modules["components.checkbox"] = function()
 
 
 end
 
-__modules["components/window"] = function()
+__modules["components.window"] = function()
 local Window = {}
 Window.__index = Window
 
@@ -140,8 +142,8 @@ __modules["register"] = function()
 local Library = {}
 Library.__index = Library
 
-local Window = require(script.components.window)
-local Tab = require(script.components.tab)
+local Window = __require("window")
+local Tab = __require("tab")
 
 function Library:CreateWindow(config)
     config = config or {}

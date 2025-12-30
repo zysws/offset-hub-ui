@@ -9,13 +9,16 @@ const modules = {};
 function walk(dir) {
     for (const file of fs.readdirSync(dir)) {
         const full = path.join(dir, file);
+
         if (fs.statSync(full).isDirectory()) {
             walk(full);
         } else if (file.endsWith(".lua")) {
             const rel = path
                 .relative(SRC_DIR, full)
                 .replace(/\\/g, "/")
-                .replace(".lua", "");
+                .replace(".lua", "")
+                .replace(/\//g, ".");
+
             modules[rel] = fs.readFileSync(full, "utf8");
         }
     }
@@ -31,10 +34,12 @@ local function __require(name)
     if __cache[name] then
         return __cache[name]
     end
+
     local fn = __modules[name]
     if not fn then
-        error("Module not found: " .. name)
+        error("Module not found: " .. name, 2)
     end
+
     local result = fn()
     __cache[name] = result
     return result
