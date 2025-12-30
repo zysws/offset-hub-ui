@@ -1,20 +1,14 @@
-local libraryGUI = Instance.new("ScreenGui")
-libraryGUI.Name = "offset-hub"
-libraryGUI.Parent = game.CoreGui
-
 local Library = {}
 Library.__index = Library
 
--- internal modules
-local Window = require(script.Window)
-local Tab = require(script.Tab)
+local Window = require(script.components.window)
+local Tab = require(script.components.tab)
 
 function Library:CreateWindow(config)
     config = config or {}
 
     local window = Window.new({
-        Title = config.Title or "UI Library",
-        Size = config.Size or UDim2.new(0, 698, 0, 325)
+        Title = config.Title or "UI Library"
     })
 
     local api = {}
