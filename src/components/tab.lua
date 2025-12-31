@@ -2,6 +2,7 @@ local Tab = {}
 Tab.__index = Tab
 
 local Shared = __require("shared")
+local Section = __require("components.section")
 local Icons = Shared.Icons
 
 
@@ -66,6 +67,11 @@ function Tab.new(window, name, icon)
     self.Button = Button
     self.Window = window
     self.Name = name
+
+    function Tab:CreateSection(name)
+        return Section.new(self.Window, self, name)
+    end
+
 
     return self
 end

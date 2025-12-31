@@ -1,19 +1,19 @@
 local Window = {}
 Window.__index = Window
 
+
+
 function Window.new(config)
     config = config or {}
     local self = setmetatable({}, Window)
 
     local title = config.Title or "UI Library"
 
-    -- ScreenGui
     local ScreenGui = Instance.new("ScreenGui")
     ScreenGui.Name = "offset-hub"
     ScreenGui.ResetOnSpawn = false
     ScreenGui.Parent = game.CoreGui
 
-    -- Main
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
     MainFrame.Parent = ScreenGui
@@ -27,7 +27,6 @@ function Window.new(config)
     UICorner.CornerRadius = UDim.new(0, 4)
     UICorner.Parent = MainFrame
 
-    -- Drop shadow
     local DropShadowHolder = Instance.new("Frame")
     DropShadowHolder.Parent = MainFrame
     DropShadowHolder.BackgroundTransparency = 1
@@ -47,7 +46,7 @@ function Window.new(config)
     DropShadow.SliceCenter = Rect.new(49, 49, 450, 450)
     DropShadow.ZIndex = 0
 
-    -- TopBar
+
     local TopBar = Instance.new("Frame")
     TopBar.Parent = MainFrame
     TopBar.BackgroundColor3 = Color3.fromRGB(50, 59, 127)
@@ -81,7 +80,7 @@ function Window.new(config)
     Padding.PaddingLeft = UDim.new(0.05, 0)
     Padding.Parent = Title
 
-    -- Tabs bar
+
     local Tabs = Instance.new("Frame")
     Tabs.Parent = MainFrame
     Tabs.BackgroundColor3 = Color3.fromRGB(72, 72, 72)
@@ -157,8 +156,9 @@ function Window.new(config)
     UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
     UIListLayout.Padding = UDim.new(0.03, 0)
 
-    -- Sections
+
     local Sections = Instance.new("ScrollingFrame")
+    Sections.Name = "Sections"
     Sections.Parent = MainFrame
     Sections.BackgroundTransparency = 1
     Sections.Position = UDim2.new(0, 0, 0, 63)
@@ -167,7 +167,54 @@ function Window.new(config)
     Sections.CanvasSize = UDim2.new(0, 0, 0, 0)
     Sections.AutomaticCanvasSize = Enum.AutomaticSize.Y
 
-    -- expose references
+    local List = Instance.new("Frame")
+    List.Name = "List"
+    List.Parent = Sections
+    List.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    List.BackgroundTransparency = 1.000
+    List.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    List.BorderSizePixel = 0
+    List.Position = UDim2.new(0.0100286528, 0, 0.0423727706, 0)
+    List.Size = UDim2.new(0, 683, 0, 346)
+
+    local UIListLayout = Instance.new("UIListLayout")
+    UIListLayout.Parent = List
+    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    UIListLayout.Wraps = true
+    UIListLayout.FillDirection =Enum.FillDirection.Horizontal
+
+    local LeftRow = Instance.new("Frame")
+    LeftRow.Name = "LeftRow"
+    LeftRow.Parent = Sections.List
+    LeftRow.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    LeftRow.BackgroundTransparency = 1.000
+    LeftRow.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    LeftRow.BorderSizePixel = 0
+    LeftRow.Size = UDim2.new(0.5, 0, 2.76013017, 0)
+
+    local UIListLayout = Instance.new("UIListLayout")
+    UIListLayout.Parent = LeftRow
+    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    UIListLayout.Padding = UDim.new(0.00999999978, 0)
+
+    local RightRow = Instance.new("Frame")
+    RightRow.Name = "RightRow"
+    RightRow.Parent = Sections.List
+    RightRow.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    RightRow.BackgroundTransparency = 1.000
+    RightRow.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    RightRow.BorderSizePixel = 0
+    RightRow.Position = UDim2.new(0.5, 0, 0, 0)
+    RightRow.Size = UDim2.new(0.5, 0, 2.74277449, 0)
+
+    local UIListLayout = Instance.new("UIListLayout")
+    UIListLayout.Parent = RightRow
+    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    UIListLayout.Padding = UDim.new(0.00999999978, 0)
+
+
+
+
     self.ScreenGui = ScreenGui
     self.MainFrame = MainFrame
     self.TabsContainer = TabsLayoutFrame
