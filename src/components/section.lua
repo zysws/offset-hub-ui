@@ -2,6 +2,8 @@ local Section = {}
 Section.__index = Section
 
 local Shared = __require("shared")
+local Checkbox = __require("components.checkbox")
+local Icons = Shared.Icons
 
 function Section.new(window, tab, name)
     assert(window, "Section.new: window is nil")
@@ -73,6 +75,43 @@ function Section.new(window, tab, name)
     UIListLayout.Parent = Layout
     UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
+    local textButton = Instance.new("TextButton")
+    textButton.Name = "Button"
+    textButton.Parent = Header
+    textButton.BackgroundTransparency = 1
+    textButton.Size = UDim2.new(1, 0, 1, 0)
+    textButton.Text = ""
+
+
+    local asset
+
+
+
+    textButton.MouseButton1Click:Connect(function()
+        self.Settings.Expanded = not self.Settings.Expanded
+
+        if not self.Settings.Expanded then
+            asset = Icons.GetAsset("arrow-down", 48)
+            if asset then
+                ImageLabel.Image = asset.Url
+                ImageLabel.ImageRectOffset = asset.ImageRectOffset
+                ImageLabel.ImageRectSize = asset.ImageRectSize
+            end
+            
+            Layout.Visible = false
+            ScaleFrame.Size = UDim2.new(0, 366, 0, 19)
+        else
+            asset = Icons.GetAsset("arrow-up", 48)
+            if asset then
+                ImageLabel.Image = asset.Url
+                ImageLabel.ImageRectOffset = asset.ImageRectOffset
+                ImageLabel.ImageRectSize = asset.ImageRectSize
+            end
+            Layout.Visible = true
+            ScaleFrame.Size = UDim2.new(0, 336, 0, 277)
+        end
+    end)
+
     -- deciding what row to go to#
     local getRow = api:GetAvailableRows()
 
@@ -83,10 +122,16 @@ function Section.new(window, tab, name)
         warn("something went wrong, found no row")
     end
 
-
     self.Window = window
     self.Tab = tab
     self.Name = name
+    self.Layout = Layout
+    self.Settings = {}
+
+    function Section:AddCheckbox(title, default)
+        return Checkbox.new(self.Window, self.Tab, self, title, default)
+    end
+
 
     return self
 end
