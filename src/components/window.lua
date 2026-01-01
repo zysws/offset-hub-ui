@@ -145,6 +145,7 @@ function Window.new(config)
     Divider.Size = UDim2.new(0, -2, 0, 30)
 
     local TabsLayoutFrame = Instance.new("Frame")
+    TabsLayoutFrame.Name = "Layout"
     TabsLayoutFrame.Parent = Tabs
     TabsLayoutFrame.BackgroundTransparency = 1
     TabsLayoutFrame.Position = UDim2.new(0.25, 0, 0.12, 0)
@@ -167,50 +168,45 @@ function Window.new(config)
     Sections.CanvasSize = UDim2.new(0, 0, 0, 0)
     Sections.AutomaticCanvasSize = Enum.AutomaticSize.Y
 
-    local List = Instance.new("Frame")
-    List.Name = "List"
-    List.Parent = Sections
-    List.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    List.BackgroundTransparency = 1.000
-    List.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    List.BorderSizePixel = 0
-    List.Position = UDim2.new(0.0100286528, 0, 0.0423727706, 0)
-    List.Size = UDim2.new(0, 683, 0, 346)
+    local UserInputService = game:GetService("UserInputService")
 
-    local UIListLayout = Instance.new("UIListLayout")
-    UIListLayout.Parent = List
-    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    UIListLayout.Wraps = true
-    UIListLayout.FillDirection =Enum.FillDirection.Horizontal
+    local dragging = false
+    local dragStart
+    local startPos
 
-    local LeftRow = Instance.new("Frame")
-    LeftRow.Name = "LeftRow"
-    LeftRow.Parent = Sections.List
-    LeftRow.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    LeftRow.BackgroundTransparency = 1.000
-    LeftRow.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    LeftRow.BorderSizePixel = 0
-    LeftRow.Size = UDim2.new(0.5, 0, 2.76013017, 0)
+    -- Start dragging
+    MainFrame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1
+            or input.UserInputType == Enum.UserInputType.Touch then
+            
+            dragging = true
+            dragStart = input.Position
+            startPos = MainFrame.Position
 
-    local UIListLayout = Instance.new("UIListLayout")
-    UIListLayout.Parent = LeftRow
-    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    UIListLayout.Padding = UDim.new(0.00999999978, 0)
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
 
-    local RightRow = Instance.new("Frame")
-    RightRow.Name = "RightRow"
-    RightRow.Parent = Sections.List
-    RightRow.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    RightRow.BackgroundTransparency = 1.000
-    RightRow.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    RightRow.BorderSizePixel = 0
-    RightRow.Position = UDim2.new(0.5, 0, 0, 0)
-    RightRow.Size = UDim2.new(0.5, 0, 2.74277449, 0)
+    -- Update position while dragging
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and (
+            input.UserInputType == Enum.UserInputType.MouseMovement
+            or input.UserInputType == Enum.UserInputType.Touch
+        ) then
+            local delta = input.Position - dragStart
+            MainFrame.Position = UDim2.new(
+                startPos.X.Scale,
+                startPos.X.Offset + delta.X,
+                startPos.Y.Scale,
+                startPos.Y.Offset + delta.Y
+            )
+        end
+    end)
 
-    local UIListLayout = Instance.new("UIListLayout")
-    UIListLayout.Parent = RightRow
-    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    UIListLayout.Padding = UDim.new(0.00999999978, 0)
 
 
 

@@ -37,8 +37,7 @@ function Checkbox.new(window, tab, section, title, default)
     CheckboxIcon.BorderColor3 = Color3.fromRGB(0, 0, 0)
     CheckboxIcon.BorderSizePixel = 0
     CheckboxIcon.Position = UDim2.new(0, 13, 0, 10)
-    CheckboxIcon.Size = UDim2.new(0, 32, 0, 34)
-    CheckboxIcon.Image = "rbxassetid://139434326289840"
+    CheckboxIcon.Size = UDim2.new(0, 32, 0, 32)
 
     local UICorner = Instance.new("UICorner")
     UICorner.Parent = CheckboxIcon
@@ -53,10 +52,11 @@ function Checkbox.new(window, tab, section, title, default)
     Title.Position = UDim2.new(0.171153232, 0, 0.208923593, 0)
     Title.Size = UDim2.new(0.548053205, 0, 0.536189139, 0)
     Title.Font = Enum.Font.Cartoon
-    Title.Text = "Enable Aimbot"
+    Title.Text = title
     Title.TextColor3 = Color3.fromRGB(255, 255, 255)
     Title.TextSize = 25.000
     Title.TextWrapped = true
+    Title.TextScaled = true
 
     local textButton = Instance.new("TextButton")
     textButton.Name = "Button"
@@ -69,11 +69,19 @@ function Checkbox.new(window, tab, section, title, default)
         self.Settings.Value = not self.Settings.Value
 
         if self.Settings.Value then
-            CheckboxIcon.Image = "rbxassetid://1264515756"
+            CheckboxIcon.Image = "rbxassetid://91533542162246"
         else
-            CheckboxIcon.Image = "rbxassetid://1264513374"
+            CheckboxIcon.Image = "rbxassetid://101646087996607"
         end
     end)
+
+    
+
+    if self.Settings.Value then
+        CheckboxIcon.Image = "rbxassetid://91533542162246"
+    else
+        CheckboxIcon.Image = "rbxassetid://101646087996607"
+    end
 
     self.Window = window
     self.Tab = tab

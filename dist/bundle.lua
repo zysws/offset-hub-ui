@@ -57,8 +57,7 @@ function Checkbox.new(window, tab, section, title, default)
     CheckboxIcon.BorderColor3 = Color3.fromRGB(0, 0, 0)
     CheckboxIcon.BorderSizePixel = 0
     CheckboxIcon.Position = UDim2.new(0, 13, 0, 10)
-    CheckboxIcon.Size = UDim2.new(0, 32, 0, 34)
-    CheckboxIcon.Image = "rbxassetid://139434326289840"
+    CheckboxIcon.Size = UDim2.new(0, 32, 0, 32)
 
     local UICorner = Instance.new("UICorner")
     UICorner.Parent = CheckboxIcon
@@ -73,10 +72,11 @@ function Checkbox.new(window, tab, section, title, default)
     Title.Position = UDim2.new(0.171153232, 0, 0.208923593, 0)
     Title.Size = UDim2.new(0.548053205, 0, 0.536189139, 0)
     Title.Font = Enum.Font.Cartoon
-    Title.Text = "Enable Aimbot"
+    Title.Text = title
     Title.TextColor3 = Color3.fromRGB(255, 255, 255)
     Title.TextSize = 25.000
     Title.TextWrapped = true
+    Title.TextScaled = true
 
     local textButton = Instance.new("TextButton")
     textButton.Name = "Button"
@@ -89,11 +89,19 @@ function Checkbox.new(window, tab, section, title, default)
         self.Settings.Value = not self.Settings.Value
 
         if self.Settings.Value then
-            CheckboxIcon.Image = "rbxassetid://1264515756"
+            CheckboxIcon.Image = "rbxassetid://91533542162246"
         else
-            CheckboxIcon.Image = "rbxassetid://1264513374"
+            CheckboxIcon.Image = "rbxassetid://101646087996607"
         end
     end)
+
+    
+
+    if self.Settings.Value then
+        CheckboxIcon.Image = "rbxassetid://91533542162246"
+    else
+        CheckboxIcon.Image = "rbxassetid://101646087996607"
+    end
 
     self.Window = window
     self.Tab = tab
@@ -116,10 +124,11 @@ local Shared = __require("shared")
 local Checkbox = __require("components.checkbox")
 local Icons = Shared.Icons
 
+local PADDING = 40
+
 function Section.new(window, tab, name)
     assert(window, "Section.new: window is nil")
     assert(name, "Section.new: name is nil")
-    
 
     local self = setmetatable({}, Section)
     local api = Shared.API
@@ -130,7 +139,7 @@ function Section.new(window, tab, name)
     ScaleFrame.BackgroundTransparency = 1.000
     ScaleFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
     ScaleFrame.BorderSizePixel = 0
-    ScaleFrame.Size = UDim2.new(0, 336, 0, 277)
+    ScaleFrame.Size = UDim2.new(0, 336, 0, 91)
 
     local Header = Instance.new("Frame")
     Header.Name = "Header"
@@ -179,13 +188,14 @@ function Section.new(window, tab, name)
     Layout.BorderSizePixel = 0
     Layout.ClipsDescendants = true
     Layout.LayoutOrder = 1
-    Layout.Position = UDim2.new(-5.44956777e-07, 0, 0.125000104, 0)
-    Layout.Size = UDim2.new(1, 0, 1.1795342, 0)
+    Layout.Position = UDim2.new(0, 0, 0, 34)
+    Layout.Size = UDim2.new(0, 336, 0, 0)
+    Layout.AutomaticSize = Enum.AutomaticSize.Y
 
     local UIListLayout = Instance.new("UIListLayout")
     UIListLayout.Parent = Layout
     UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-
+    
     local textButton = Instance.new("TextButton")
     textButton.Name = "Button"
     textButton.Parent = Header
@@ -195,8 +205,6 @@ function Section.new(window, tab, name)
 
 
     local asset
-
-
 
     textButton.MouseButton1Click:Connect(function()
         self.Settings.Expanded = not self.Settings.Expanded
@@ -219,12 +227,55 @@ function Section.new(window, tab, name)
                 ImageLabel.ImageRectSize = asset.ImageRectSize
             end
             Layout.Visible = true
-            ScaleFrame.Size = UDim2.new(0, 336, 0, 277)
+            ScaleFrame.Size = UDim2.new(0, 336, 0, 277 + PADDING)
         end
     end)
 
+    -- resizes scaleframe to layout, because other sections overlap otherwise
+    local function resize()
+        ScaleFrame.Size = UDim2.new(
+            ScaleFrame.Size.X.Scale,
+            ScaleFrame.Size.X.Offset,
+            0,
+            Layout.AbsoluteSize.Y + PADDING
+        )
+    end
+
+    Layout:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize)
+    
+    resize()
+
+
     -- deciding what row to go to#
-    local getRow = api:GetAvailableRows()
+    local listName = "Tab_"..tab.Name
+    local list = window.SectionsContainer:FindFirstChild(listName)
+
+    local getRow
+
+    local sections = list
+    local leftRow = sections.LeftRow
+    local rightRow = sections.RightRow
+
+    local leftCount = 0
+    local rightCount = 0
+
+    for _, child in ipairs(leftRow:GetChildren()) do
+        if child:IsA("Frame") then
+            leftCount += 1
+        end
+    end
+
+    for _, child in ipairs(rightRow:GetChildren()) do
+        if child:IsA("Frame") then
+            rightCount += 1
+        end
+    end
+
+    if leftCount <= rightCount then
+        getRow = leftRow
+    else
+        getRow = rightRow
+    end
 
 
     if getRow then
@@ -316,6 +367,64 @@ function Tab.new(window, name, icon)
     Button.Text = ""
     Button.Parent = TabFrame
 
+    local List = Instance.new("Frame")
+    List.Name = "Tab_"..name
+    List.Parent = window.SectionsContainer
+    List.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    List.BackgroundTransparency = 1.000
+    List.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    List.BorderSizePixel = 0
+    List.Position = UDim2.new(0.0100286528, 0, 0.0423727706, 0)
+    List.Size = UDim2.new(0, 683, 0, 346)
+    List.Visible = false
+
+    local LeftRow = Instance.new("Frame")
+    LeftRow.Name = "LeftRow"
+    LeftRow.Parent = List
+    LeftRow.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    LeftRow.BackgroundTransparency = 1.000
+    LeftRow.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    LeftRow.BorderSizePixel = 0
+    LeftRow.Size = UDim2.new(0.5, 0, 2.76013017, 0)
+
+    local UIListLayout = Instance.new("UIListLayout")
+    UIListLayout.Parent = LeftRow
+    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    UIListLayout.Padding = UDim.new(0.00999999978, 0)
+
+    local RightRow = Instance.new("Frame")
+    RightRow.Name = "RightRow"
+    RightRow.Parent = List
+    RightRow.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    RightRow.BackgroundTransparency = 1.000
+    RightRow.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    RightRow.BorderSizePixel = 0
+    RightRow.Position = UDim2.new(0.5, 0, 0, 0)
+    RightRow.Size = UDim2.new(0.5, 0, 2.74277449, 0)
+
+    local UIListLayout = Instance.new("UIListLayout")
+    UIListLayout.Parent = RightRow
+    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    UIListLayout.Padding = UDim.new(0.00999999978, 0)
+
+    Button.MouseButton1Click:Connect(function()
+        for _, tabFrame in ipairs(window.TabsContainer:GetChildren()) do
+            if tabFrame:IsA("Frame") then
+                tabFrame.BackgroundColor3 = Color3.fromRGB(126, 126, 126)
+            end
+        end
+
+        TabFrame.BackgroundColor3 = Color3.fromRGB(82, 82, 82)
+
+        for _, list in ipairs(window.SectionsContainer:GetChildren()) do
+            if list:IsA("Frame") then
+                list.Visible = false
+            end
+        end
+
+        List.Visible = true
+    end)
+
     -- Store refs
     self.Frame = TabFrame
     self.Button = Button
@@ -325,6 +434,8 @@ function Tab.new(window, name, icon)
     function Tab:CreateSection(name)
         return Section.new(self.Window, self, name)
     end
+
+    
 
 
     return self
@@ -482,6 +593,7 @@ function Window.new(config)
     Divider.Size = UDim2.new(0, -2, 0, 30)
 
     local TabsLayoutFrame = Instance.new("Frame")
+    TabsLayoutFrame.Name = "Layout"
     TabsLayoutFrame.Parent = Tabs
     TabsLayoutFrame.BackgroundTransparency = 1
     TabsLayoutFrame.Position = UDim2.new(0.25, 0, 0.12, 0)
@@ -504,50 +616,45 @@ function Window.new(config)
     Sections.CanvasSize = UDim2.new(0, 0, 0, 0)
     Sections.AutomaticCanvasSize = Enum.AutomaticSize.Y
 
-    local List = Instance.new("Frame")
-    List.Name = "List"
-    List.Parent = Sections
-    List.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    List.BackgroundTransparency = 1.000
-    List.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    List.BorderSizePixel = 0
-    List.Position = UDim2.new(0.0100286528, 0, 0.0423727706, 0)
-    List.Size = UDim2.new(0, 683, 0, 346)
+    local UserInputService = game:GetService("UserInputService")
 
-    local UIListLayout = Instance.new("UIListLayout")
-    UIListLayout.Parent = List
-    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    UIListLayout.Wraps = true
-    UIListLayout.FillDirection =Enum.FillDirection.Horizontal
+    local dragging = false
+    local dragStart
+    local startPos
 
-    local LeftRow = Instance.new("Frame")
-    LeftRow.Name = "LeftRow"
-    LeftRow.Parent = Sections.List
-    LeftRow.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    LeftRow.BackgroundTransparency = 1.000
-    LeftRow.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    LeftRow.BorderSizePixel = 0
-    LeftRow.Size = UDim2.new(0.5, 0, 2.76013017, 0)
+    -- Start dragging
+    MainFrame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1
+            or input.UserInputType == Enum.UserInputType.Touch then
+            
+            dragging = true
+            dragStart = input.Position
+            startPos = MainFrame.Position
 
-    local UIListLayout = Instance.new("UIListLayout")
-    UIListLayout.Parent = LeftRow
-    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    UIListLayout.Padding = UDim.new(0.00999999978, 0)
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
 
-    local RightRow = Instance.new("Frame")
-    RightRow.Name = "RightRow"
-    RightRow.Parent = Sections.List
-    RightRow.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    RightRow.BackgroundTransparency = 1.000
-    RightRow.BorderColor3 = Color3.fromRGB(0, 0, 0)
-    RightRow.BorderSizePixel = 0
-    RightRow.Position = UDim2.new(0.5, 0, 0, 0)
-    RightRow.Size = UDim2.new(0.5, 0, 2.74277449, 0)
+    -- Update position while dragging
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and (
+            input.UserInputType == Enum.UserInputType.MouseMovement
+            or input.UserInputType == Enum.UserInputType.Touch
+        ) then
+            local delta = input.Position - dragStart
+            MainFrame.Position = UDim2.new(
+                startPos.X.Scale,
+                startPos.X.Offset + delta.X,
+                startPos.Y.Scale,
+                startPos.Y.Offset + delta.Y
+            )
+        end
+    end)
 
-    local UIListLayout = Instance.new("UIListLayout")
-    UIListLayout.Parent = RightRow
-    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    UIListLayout.Padding = UDim.new(0.00999999978, 0)
 
 
 
@@ -1941,32 +2048,6 @@ function Library:CreateWindow(config)
 	end
 
 
-	function api:GetAvailableRows()
-		local sections = window.SectionsContainer.List
-		local leftRow = sections.LeftRow
-		local rightRow = sections.RightRow
-
-		local leftCount = 0
-		local rightCount = 0
-
-		for _, child in ipairs(leftRow:GetChildren()) do
-			if child:IsA("Frame") then
-				leftCount += 1
-			end
-		end
-
-		for _, child in ipairs(rightRow:GetChildren()) do
-			if child:IsA("Frame") then
-				rightCount += 1
-			end
-		end
-
-		if leftCount <= rightCount then
-			return leftRow
-		else
-			return rightRow
-		end
-	end
 
 
 

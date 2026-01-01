@@ -26,32 +26,6 @@ function Library:CreateWindow(config)
 	end
 
 
-	function api:GetAvailableRows()
-		local sections = window.SectionsContainer.List
-		local leftRow = sections.LeftRow
-		local rightRow = sections.RightRow
-
-		local leftCount = 0
-		local rightCount = 0
-
-		for _, child in ipairs(leftRow:GetChildren()) do
-			if child:IsA("Frame") then
-				leftCount += 1
-			end
-		end
-
-		for _, child in ipairs(rightRow:GetChildren()) do
-			if child:IsA("Frame") then
-				rightCount += 1
-			end
-		end
-
-		if leftCount <= rightCount then
-			return leftRow
-		else
-			return rightRow
-		end
-	end
 
 
 

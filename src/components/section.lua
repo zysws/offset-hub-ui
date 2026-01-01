@@ -5,10 +5,11 @@ local Shared = __require("shared")
 local Checkbox = __require("components.checkbox")
 local Icons = Shared.Icons
 
+local PADDING = 40
+
 function Section.new(window, tab, name)
     assert(window, "Section.new: window is nil")
     assert(name, "Section.new: name is nil")
-    
 
     local self = setmetatable({}, Section)
     local api = Shared.API
@@ -19,7 +20,7 @@ function Section.new(window, tab, name)
     ScaleFrame.BackgroundTransparency = 1.000
     ScaleFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
     ScaleFrame.BorderSizePixel = 0
-    ScaleFrame.Size = UDim2.new(0, 336, 0, 277)
+    ScaleFrame.Size = UDim2.new(0, 336, 0, 91)
 
     local Header = Instance.new("Frame")
     Header.Name = "Header"
@@ -68,13 +69,14 @@ function Section.new(window, tab, name)
     Layout.BorderSizePixel = 0
     Layout.ClipsDescendants = true
     Layout.LayoutOrder = 1
-    Layout.Position = UDim2.new(-5.44956777e-07, 0, 0.125000104, 0)
-    Layout.Size = UDim2.new(1, 0, 1.1795342, 0)
+    Layout.Position = UDim2.new(0, 0, 0, 34)
+    Layout.Size = UDim2.new(0, 336, 0, 0)
+    Layout.AutomaticSize = Enum.AutomaticSize.Y
 
     local UIListLayout = Instance.new("UIListLayout")
     UIListLayout.Parent = Layout
     UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-
+    
     local textButton = Instance.new("TextButton")
     textButton.Name = "Button"
     textButton.Parent = Header
@@ -84,8 +86,6 @@ function Section.new(window, tab, name)
 
 
     local asset
-
-
 
     textButton.MouseButton1Click:Connect(function()
         self.Settings.Expanded = not self.Settings.Expanded
@@ -108,12 +108,55 @@ function Section.new(window, tab, name)
                 ImageLabel.ImageRectSize = asset.ImageRectSize
             end
             Layout.Visible = true
-            ScaleFrame.Size = UDim2.new(0, 336, 0, 277)
+            ScaleFrame.Size = UDim2.new(0, 336, 0, 277 + PADDING)
         end
     end)
 
+    -- resizes scaleframe to layout, because other sections overlap otherwise
+    local function resize()
+        ScaleFrame.Size = UDim2.new(
+            ScaleFrame.Size.X.Scale,
+            ScaleFrame.Size.X.Offset,
+            0,
+            Layout.AbsoluteSize.Y + PADDING
+        )
+    end
+
+    Layout:GetPropertyChangedSignal("AbsoluteSize"):Connect(resize)
+    
+    resize()
+
+
     -- deciding what row to go to#
-    local getRow = api:GetAvailableRows()
+    local listName = "Tab_"..tab.Name
+    local list = window.SectionsContainer:FindFirstChild(listName)
+
+    local getRow
+
+    local sections = list
+    local leftRow = sections.LeftRow
+    local rightRow = sections.RightRow
+
+    local leftCount = 0
+    local rightCount = 0
+
+    for _, child in ipairs(leftRow:GetChildren()) do
+        if child:IsA("Frame") then
+            leftCount += 1
+        end
+    end
+
+    for _, child in ipairs(rightRow:GetChildren()) do
+        if child:IsA("Frame") then
+            rightCount += 1
+        end
+    end
+
+    if leftCount <= rightCount then
+        getRow = leftRow
+    else
+        getRow = rightRow
+    end
 
 
     if getRow then

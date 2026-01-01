@@ -62,6 +62,64 @@ function Tab.new(window, name, icon)
     Button.Text = ""
     Button.Parent = TabFrame
 
+    local List = Instance.new("Frame")
+    List.Name = "Tab_"..name
+    List.Parent = window.SectionsContainer
+    List.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    List.BackgroundTransparency = 1.000
+    List.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    List.BorderSizePixel = 0
+    List.Position = UDim2.new(0.0100286528, 0, 0.0423727706, 0)
+    List.Size = UDim2.new(0, 683, 0, 346)
+    List.Visible = false
+
+    local LeftRow = Instance.new("Frame")
+    LeftRow.Name = "LeftRow"
+    LeftRow.Parent = List
+    LeftRow.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    LeftRow.BackgroundTransparency = 1.000
+    LeftRow.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    LeftRow.BorderSizePixel = 0
+    LeftRow.Size = UDim2.new(0.5, 0, 2.76013017, 0)
+
+    local UIListLayout = Instance.new("UIListLayout")
+    UIListLayout.Parent = LeftRow
+    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    UIListLayout.Padding = UDim.new(0.00999999978, 0)
+
+    local RightRow = Instance.new("Frame")
+    RightRow.Name = "RightRow"
+    RightRow.Parent = List
+    RightRow.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    RightRow.BackgroundTransparency = 1.000
+    RightRow.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    RightRow.BorderSizePixel = 0
+    RightRow.Position = UDim2.new(0.5, 0, 0, 0)
+    RightRow.Size = UDim2.new(0.5, 0, 2.74277449, 0)
+
+    local UIListLayout = Instance.new("UIListLayout")
+    UIListLayout.Parent = RightRow
+    UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    UIListLayout.Padding = UDim.new(0.00999999978, 0)
+
+    Button.MouseButton1Click:Connect(function()
+        for _, tabFrame in ipairs(window.TabsContainer:GetChildren()) do
+            if tabFrame:IsA("Frame") then
+                tabFrame.BackgroundColor3 = Color3.fromRGB(126, 126, 126)
+            end
+        end
+
+        TabFrame.BackgroundColor3 = Color3.fromRGB(82, 82, 82)
+
+        for _, list in ipairs(window.SectionsContainer:GetChildren()) do
+            if list:IsA("Frame") then
+                list.Visible = false
+            end
+        end
+
+        List.Visible = true
+    end)
+
     -- Store refs
     self.Frame = TabFrame
     self.Button = Button
@@ -71,6 +129,8 @@ function Tab.new(window, name, icon)
     function Tab:CreateSection(name)
         return Section.new(self.Window, self, name)
     end
+
+    
 
 
     return self
