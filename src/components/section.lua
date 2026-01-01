@@ -3,6 +3,7 @@ Section.__index = Section
 
 local Shared = __require("shared")
 local Checkbox = __require("components.checkbox")
+local Slider = __require("components.slider")
 local Icons = Shared.Icons
 
 local PADDING = 40
@@ -173,6 +174,10 @@ function Section.new(window, tab, name)
 
     function Section:AddCheckbox(title, default)
         return Checkbox.new(self.Window, self.Tab, self, title, default)
+    end
+
+    function Section:AddSlider(title, min, max, default, increment)
+        return Slider.new(self.Window, self.Tab, self, title, min, max, default, increment)
     end
 
 
