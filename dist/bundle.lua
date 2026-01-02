@@ -17,6 +17,93 @@ local function __require(name)
     return result
 end
 
+__modules["components.button"] = function()
+local Button = {}
+Button.__index = Button
+
+function Button.new(window, tab, section, title, callback)
+    assert(window, "Button.new: window is nil")
+    assert(tab, "Button.new: tab is nil")
+    assert(section, "Button.new: section is nil")
+    assert(title, "Button.new: title is nil")
+    assert(callback, "Button.new: callback is nil")
+
+    local self = setmetatable({}, Button)
+
+    local Button = Instance.new("Frame")
+    Button.Name = "Button"
+    Button.Parent = section.Layout
+    Button.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Button.BackgroundTransparency = 1.000
+    Button.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    Button.BorderSizePixel = 0
+    Button.LayoutOrder = 2
+    Button.Position = UDim2.new(0, 52, 0, 221)
+    Button.Size = UDim2.new(0, 348, 0, 71)
+
+    local ButtonFrame = Instance.new("Frame")
+    ButtonFrame.Name = "ButtonFrame"
+    ButtonFrame.Parent = Button
+    ButtonFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    ButtonFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    ButtonFrame.BorderSizePixel = 0
+    ButtonFrame.Position = UDim2.new(0.169330046, 0, 0.116766781, 0)
+    ButtonFrame.Size = UDim2.new(-0.0790688768, 218, 0.675029159, 0)
+
+    local UIStroke = Instance.new("UIStroke")
+    UIStroke.Color = Color3.fromRGB(167, 167, 167)
+    UIStroke.Parent = ButtonFrame
+    UIStroke.Thickness = 1
+    
+    local TextButton = Instance.new("TextButton")
+    TextButton.Name = "TextButton"
+    TextButton.Text = ""
+    TextButton.Parent = ButtonFrame
+    TextButton.BackgroundTransparency = 1
+    TextButton.Size = UDim2.new(1, 0, 1, 0)
+
+    local UICorner = Instance.new("UICorner")
+    UICorner.Parent = ButtonFrame
+
+    local TextLabel = Instance.new("TextLabel")
+    TextLabel.Parent = ButtonFrame
+    TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    TextLabel.BackgroundTransparency = 1.000
+    TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    TextLabel.BorderSizePixel = 0
+    TextLabel.Position = UDim2.new(0.140950054, 0, 0.187648401, 0)
+    TextLabel.Size = UDim2.new(0.672972083, 0, 0.607843161, 0)
+    TextLabel.Font = Enum.Font.Cartoon
+    TextLabel.Text = "Button"
+    TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TextLabel.TextScaled = true
+    TextLabel.TextSize = 14.000
+    TextLabel.TextWrapped = true
+
+    local UIGradient = Instance.new("UIGradient")
+    UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(25, 25, 25)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(34, 34, 34))}
+    UIGradient.Rotation = 90
+    UIGradient.Parent = ButtonFrame
+
+
+    TextButton.MouseButton1Click:Connect(function()
+        callback()
+    end)
+
+    
+
+    self.Window = window
+    self.Tab = tab
+    self.Name = title
+    self.Section = section
+
+    return self
+    
+end
+
+return Button
+end
+
 __modules["components.checkbox"] = function()
 local Checkbox = {}
 Checkbox.__index = Checkbox
@@ -24,7 +111,7 @@ Checkbox.__index = Checkbox
 local Shared = __require("shared")
 
 
-function Checkbox.new(window, tab, section, title, default)
+function Checkbox.new(window, tab, section, title, default, callback)
     assert(window, "Checkbox.new: window is nil")
     assert(tab, "Checkbox.new: tab is nil")
     assert(section, "Checkbox.new: section is nil")
@@ -34,6 +121,8 @@ function Checkbox.new(window, tab, section, title, default)
 
     local self = setmetatable({}, Checkbox)
     local api = Shared.API
+
+    callback = callback or function() end
 
     self.Settings = {
         Title = title,
@@ -93,6 +182,8 @@ function Checkbox.new(window, tab, section, title, default)
         else
             CheckboxIcon.Image = "rbxassetid://101646087996607"
         end
+
+        callback(self.Settings.Value)
     end)
 
     
@@ -123,6 +214,7 @@ Section.__index = Section
 local Shared = __require("shared")
 local Checkbox = __require("components.checkbox")
 local Slider = __require("components.slider")
+local Button = __require("components.button")
 local Icons = Shared.Icons
 
 local PADDING = 40
@@ -291,13 +383,69 @@ function Section.new(window, tab, name)
     self.Layout = Layout
     self.Settings = {}
 
-    function Section:AddCheckbox(title, default)
-        return Checkbox.new(self.Window, self.Tab, self, title, default)
+    function Section:AddCheckbox(...)
+        local args = {...}
+
+        -- table-based API
+        if type(args[1]) == "table" then
+            local cfg = args[1]
+
+            return Checkbox.new(
+                self.Window,
+                self.Tab,
+                self,
+                cfg.Title or "Checkbox",
+                cfg.Default or false,
+                cfg.Callback
+            )
+        end
+
+        -- legacy api
+        return Checkbox.new(self.Window, self.Tab, self, ...)
     end
 
-    function Section:AddSlider(title, min, max, default, increment)
-        return Slider.new(self.Window, self.Tab, self, title, min, max, default, increment)
+
+    function Section:AddSlider(...)
+        local args = {...}
+
+        if type(args[1]) == "table" then
+            local cfg = args[1]
+
+            return Slider.new(
+                self.Window,
+                self.Tab,
+                self,
+                cfg.Title or "Slider",
+                cfg.Min or 0,
+                cfg.Max or 100,
+                cfg.Default or cfg.Min or 0,
+                cfg.Increment or 1,
+                cfg.Callback
+            )
+        end
+
+        return Slider.new(self.Window, self.Tab, self, ...)
     end
+
+
+    function Section:AddButton(...)
+        local args = {...}
+
+        if type(args[1]) == "table" then
+            local cfg = args[1]
+
+            return Button.new(
+                self.Window,
+                self.Tab,
+                self,
+                cfg.Title or "Button",
+                cfg.Callback
+            )
+        end
+
+        return Button.new(self.Window, self.Tab, self, ...)
+    end
+
 
 
     return self
@@ -311,7 +459,7 @@ __modules["components.slider"] = function()
 local Slider = {}
 Slider.__index = Slider
 
-function Slider.new(window, tab, section, title, min, max, default, increment)
+function Slider.new(window, tab, section, title, min, max, default, increment, callback)
 	assert(window, "Slider.new: window is nil")
 	assert(tab, "Slider.new: tab is nil")
 	assert(section, "Slider.new: section is nil")
@@ -334,6 +482,7 @@ function Slider.new(window, tab, section, title, min, max, default, increment)
 	Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 	Title.TextScaled = true
 
+	-- Full bar
 	local SliderLine = Instance.new("Frame")
 	SliderLine.Parent = SliderFrame
 	SliderLine.AnchorPoint = Vector2.new(0, 0.5)
@@ -343,6 +492,16 @@ function Slider.new(window, tab, section, title, min, max, default, increment)
 	SliderLine.BorderSizePixel = 0
 	Instance.new("UICorner", SliderLine).CornerRadius = UDim.new(0, 16)
 
+	-- Blue fill bar
+	local FillBar = Instance.new("Frame")
+	FillBar.Parent = SliderLine
+	FillBar.BackgroundColor3 = Color3.fromRGB(0, 140, 255)
+	FillBar.BorderSizePixel = 0
+	FillBar.Size = UDim2.new(0, 0, 1, 0)
+	FillBar.Position = UDim2.new(0, 0, 0, 0)
+	Instance.new("UICorner", FillBar).CornerRadius = UDim.new(0, 16)
+
+	-- Knob
 	local Knob = Instance.new("ImageButton")
 	Knob.Parent = SliderFrame
 	Knob.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -400,7 +559,7 @@ function Slider.new(window, tab, section, title, min, max, default, increment)
 
 	local DECIMALS = decimalsFromIncrement()
 
-	-- Update (NO STEPPING)
+	-- Update
 	local function update(mouseX)
 		local barLeft = SliderLine.AbsolutePosition.X
 		local barRight = barLeft + SliderLine.AbsoluteSize.X
@@ -411,17 +570,19 @@ function Slider.new(window, tab, section, title, min, max, default, increment)
 			barRight
 		)
 
-		-- smooth knob movement
 		local localCenterX = centerX - SliderFrame.AbsolutePosition.X
 		Knob.Position = UDim2.new(0, localCenterX, Knob.Position.Y.Scale, Knob.Position.Y.Offset)
 
-		-- value calculation
 		local alpha = (centerX - barLeft) / (barRight - barLeft)
 		local rawValue = MIN + alpha * (MAX - MIN)
 		local value = applyIncrement(rawValue)
 
+		FillBar.Size = UDim2.new(alpha, 0, 1, 0)
+
 		Number.Text = string.format("%." .. DECIMALS .. "f", value)
 		self.Settings.Value = value
+
+		callback(value)
 	end
 
 	-- Input
@@ -452,6 +613,7 @@ function Slider.new(window, tab, section, title, min, max, default, increment)
 
 		Knob.Position = UDim2.new(0, localCenterX, Knob.Position.Y.Scale, Knob.Position.Y.Offset)
 		Number.Text = string.format("%." .. DECIMALS .. "f", DEFAULT)
+		FillBar.Size = UDim2.new(alpha, 0, 1, 0)
 	end
 
 	self.Settings = {

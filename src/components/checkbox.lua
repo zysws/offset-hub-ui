@@ -4,7 +4,7 @@ Checkbox.__index = Checkbox
 local Shared = __require("shared")
 
 
-function Checkbox.new(window, tab, section, title, default)
+function Checkbox.new(window, tab, section, title, default, callback)
     assert(window, "Checkbox.new: window is nil")
     assert(tab, "Checkbox.new: tab is nil")
     assert(section, "Checkbox.new: section is nil")
@@ -14,6 +14,8 @@ function Checkbox.new(window, tab, section, title, default)
 
     local self = setmetatable({}, Checkbox)
     local api = Shared.API
+
+    callback = callback or function() end
 
     self.Settings = {
         Title = title,
@@ -73,6 +75,8 @@ function Checkbox.new(window, tab, section, title, default)
         else
             CheckboxIcon.Image = "rbxassetid://101646087996607"
         end
+
+        callback(self.Settings.Value)
     end)
 
     

@@ -4,6 +4,7 @@ Section.__index = Section
 local Shared = __require("shared")
 local Checkbox = __require("components.checkbox")
 local Slider = __require("components.slider")
+local Button = __require("components.button")
 local Icons = Shared.Icons
 
 local PADDING = 40
@@ -172,13 +173,69 @@ function Section.new(window, tab, name)
     self.Layout = Layout
     self.Settings = {}
 
-    function Section:AddCheckbox(title, default)
-        return Checkbox.new(self.Window, self.Tab, self, title, default)
+    function Section:AddCheckbox(...)
+        local args = {...}
+
+        -- table-based API
+        if type(args[1]) == "table" then
+            local cfg = args[1]
+
+            return Checkbox.new(
+                self.Window,
+                self.Tab,
+                self,
+                cfg.Title or "Checkbox",
+                cfg.Default or false,
+                cfg.Callback
+            )
+        end
+
+        -- legacy api
+        return Checkbox.new(self.Window, self.Tab, self, ...)
     end
 
-    function Section:AddSlider(title, min, max, default, increment)
-        return Slider.new(self.Window, self.Tab, self, title, min, max, default, increment)
+
+    function Section:AddSlider(...)
+        local args = {...}
+
+        if type(args[1]) == "table" then
+            local cfg = args[1]
+
+            return Slider.new(
+                self.Window,
+                self.Tab,
+                self,
+                cfg.Title or "Slider",
+                cfg.Min or 0,
+                cfg.Max or 100,
+                cfg.Default or cfg.Min or 0,
+                cfg.Increment or 1,
+                cfg.Callback
+            )
+        end
+
+        return Slider.new(self.Window, self.Tab, self, ...)
     end
+
+
+    function Section:AddButton(...)
+        local args = {...}
+
+        if type(args[1]) == "table" then
+            local cfg = args[1]
+
+            return Button.new(
+                self.Window,
+                self.Tab,
+                self,
+                cfg.Title or "Button",
+                cfg.Callback
+            )
+        end
+
+        return Button.new(self.Window, self.Tab, self, ...)
+    end
+
 
 
     return self

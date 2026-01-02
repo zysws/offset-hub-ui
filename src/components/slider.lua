@@ -1,7 +1,7 @@
 local Slider = {}
 Slider.__index = Slider
 
-function Slider.new(window, tab, section, title, min, max, default, increment)
+function Slider.new(window, tab, section, title, min, max, default, increment, callback)
 	assert(window, "Slider.new: window is nil")
 	assert(tab, "Slider.new: tab is nil")
 	assert(section, "Slider.new: section is nil")
@@ -24,6 +24,7 @@ function Slider.new(window, tab, section, title, min, max, default, increment)
 	Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 	Title.TextScaled = true
 
+	-- Full bar
 	local SliderLine = Instance.new("Frame")
 	SliderLine.Parent = SliderFrame
 	SliderLine.AnchorPoint = Vector2.new(0, 0.5)
@@ -33,6 +34,16 @@ function Slider.new(window, tab, section, title, min, max, default, increment)
 	SliderLine.BorderSizePixel = 0
 	Instance.new("UICorner", SliderLine).CornerRadius = UDim.new(0, 16)
 
+	-- Blue fill bar
+	local FillBar = Instance.new("Frame")
+	FillBar.Parent = SliderLine
+	FillBar.BackgroundColor3 = Color3.fromRGB(0, 140, 255)
+	FillBar.BorderSizePixel = 0
+	FillBar.Size = UDim2.new(0, 0, 1, 0)
+	FillBar.Position = UDim2.new(0, 0, 0, 0)
+	Instance.new("UICorner", FillBar).CornerRadius = UDim.new(0, 16)
+
+	-- Knob
 	local Knob = Instance.new("ImageButton")
 	Knob.Parent = SliderFrame
 	Knob.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -90,7 +101,7 @@ function Slider.new(window, tab, section, title, min, max, default, increment)
 
 	local DECIMALS = decimalsFromIncrement()
 
-	-- Update (NO STEPPING)
+	-- Update
 	local function update(mouseX)
 		local barLeft = SliderLine.AbsolutePosition.X
 		local barRight = barLeft + SliderLine.AbsoluteSize.X
@@ -101,17 +112,19 @@ function Slider.new(window, tab, section, title, min, max, default, increment)
 			barRight
 		)
 
-		-- smooth knob movement
 		local localCenterX = centerX - SliderFrame.AbsolutePosition.X
 		Knob.Position = UDim2.new(0, localCenterX, Knob.Position.Y.Scale, Knob.Position.Y.Offset)
 
-		-- value calculation
 		local alpha = (centerX - barLeft) / (barRight - barLeft)
 		local rawValue = MIN + alpha * (MAX - MIN)
 		local value = applyIncrement(rawValue)
 
+		FillBar.Size = UDim2.new(alpha, 0, 1, 0)
+
 		Number.Text = string.format("%." .. DECIMALS .. "f", value)
 		self.Settings.Value = value
+
+		callback(value)
 	end
 
 	-- Input
@@ -142,6 +155,7 @@ function Slider.new(window, tab, section, title, min, max, default, increment)
 
 		Knob.Position = UDim2.new(0, localCenterX, Knob.Position.Y.Scale, Knob.Position.Y.Offset)
 		Number.Text = string.format("%." .. DECIMALS .. "f", DEFAULT)
+		FillBar.Size = UDim2.new(alpha, 0, 1, 0)
 	end
 
 	self.Settings = {
