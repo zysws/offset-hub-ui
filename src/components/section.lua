@@ -5,6 +5,7 @@ local Shared = __require("shared")
 local Checkbox = __require("components.checkbox")
 local Slider = __require("components.slider")
 local Button = __require("components.button")
+local Dropdown = __require("components.dropdown")
 local Icons = Shared.Icons
 
 local PADDING = 40
@@ -234,6 +235,25 @@ function Section.new(window, tab, name)
         end
 
         return Button.new(self.Window, self.Tab, self, ...)
+    end
+
+    function Section:AddDropdown(...)
+        local args = {...}
+
+        if type(args[1]) == "table" then
+            local cfg = args[1]
+
+            return Dropdown.new(
+                self.Window,
+                self.Tab,
+                self,
+                cfg.Title or "Button",
+                cfg.Options or {},
+                cfg.Callback
+            )
+        end
+
+        return Dropdown.new(self.Window, self.Tab, self, ...)
     end
 
 

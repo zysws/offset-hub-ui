@@ -13,7 +13,8 @@ function Library:CreateWindow(config)
 	config = config or {}
 
 	local window = Window.new({
-		Title = config.Title or "UI Library"
+		Title = config.Title or "UI Library",
+		MinimiseKey = config.MinimiseKey or Enum.KeyCode.K
 	})
 
 	local api = {}

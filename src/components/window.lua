@@ -207,6 +207,16 @@ function Window.new(config)
         end
     end)
 
+    local minimiseKey = config.MinimiseKey or Enum.KeyCode.K
+
+    UserInputService.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.Keyboard then
+            if input.KeyCode == minimiseKey then
+                ScreenGui.Enabled = not ScreenGui.Enabled
+            end
+        end
+    end)
+
 
 
 
