@@ -53,6 +53,56 @@ function Window.new(config)
     TopBar.BorderSizePixel = 0
     TopBar.Size = UDim2.new(1, 0, 0, 31)
 
+    local Buttons = Instance.new("Frame")
+    Buttons.Name = "Buttons"
+    Buttons.Parent = MainFrame
+    Buttons.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Buttons.BackgroundTransparency = 1.000
+    Buttons.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    Buttons.BorderSizePixel = 0
+    Buttons.Position = UDim2.new(0.783667624, 0, -0.00615384616, 0)
+    Buttons.Size = UDim2.new(0.214855999, 0, 0.0974429101, 0)
+
+    local MinimiseButton = Instance.new("Frame")
+    MinimiseButton.Name = "MinimiseButton"
+    MinimiseButton.Parent = Buttons
+    MinimiseButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    MinimiseButton.BackgroundTransparency = 1.000
+    MinimiseButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    MinimiseButton.BorderSizePixel = 0
+    MinimiseButton.Position = UDim2.new(0.346737206, 0, 0, 0)
+    MinimiseButton.Size = UDim2.new(0.25, 0, 1, 0)
+
+    local ImageButton = Instance.new("ImageButton")
+    ImageButton.Parent = MinimiseButton
+    ImageButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    ImageButton.BackgroundTransparency = 1.000
+    ImageButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    ImageButton.BorderSizePixel = 0
+    ImageButton.Position = UDim2.new(0.0855138153, 0, 0.0211235508, 0)
+    ImageButton.Size = UDim2.new(0.914485872, 0, 0.9144876, 0)
+    ImageButton.Image = "rbxassetid://120201506732830"
+
+    local ExitButton = Instance.new("Frame")
+    ExitButton.Name = "ExitButton"
+    ExitButton.Parent = Buttons
+    ExitButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    ExitButton.BackgroundTransparency = 1.000
+    ExitButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    ExitButton.BorderSizePixel = 0
+    ExitButton.Position = UDim2.new(0.671596169, 0, 0.0191755444, 0)
+    ExitButton.Size = UDim2.new(0.245206133, 0, 0.980824471, 0)
+
+    local ImageButton_2 = Instance.new("ImageButton")
+    ImageButton_2.Parent = ExitButton
+    ImageButton_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    ImageButton_2.BackgroundTransparency = 1.000
+    ImageButton_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    ImageButton_2.BorderSizePixel = 0
+    ImageButton_2.Position = UDim2.new(-0.0221777409, 0, 0.120980047, 0)
+    ImageButton_2.Size = UDim2.new(0.750242352, 0, 0.750243425, 0)
+    ImageButton_2.Image = "rbxassetid://79704422574304"
+
     local CoverFrame = Instance.new("Frame")
     CoverFrame.Name = "CoverFrame"
     CoverFrame.Parent = TopBar
@@ -168,6 +218,115 @@ function Window.new(config)
     Sections.CanvasSize = UDim2.new(0, 0, 0, 0)
     Sections.AutomaticCanvasSize = Enum.AutomaticSize.Y
 
+    local function FuzzySearch(ComparisonStrings, SearchString)
+        local SearchResults = {}
+        
+        for _,ComparisonString in pairs(ComparisonStrings) do
+            local ComparisonStringLength = #ComparisonString
+            local SearchStringLength = #SearchString
+            
+            if SearchStringLength <= ComparisonStringLength + 5 then
+                
+                local TempComparisonString = ComparisonString:lower()
+                local TempSearchString = SearchString:lower()
+                
+                local Cost
+                
+                local Rows = ComparisonStringLength  + 1
+                local Columns = SearchStringLength + 1
+                
+                local Distance = {}
+            
+                for i = 1, Rows do
+                    Distance[i] = {}
+                    
+                    for k = 1, Columns do
+                        Distance[i][k] = 0
+                    end
+                end
+                
+                for i = 2, Rows do
+                    for k = 2, Columns do
+                        Distance[i][1] = i
+                        Distance[1][k] = k
+                    end
+                end
+                
+                for i = 2, Columns do
+                    for k = 2, Rows do
+                        if TempComparisonString:sub(k - 1, k - 1) == TempSearchString:sub(i - 1, i - 1) then
+                            Cost = 0
+                        else
+                            Cost = 2
+                        end
+                        
+                        Distance[k][i] = math.min(
+                            Distance[k - 1][i] + 1,
+                            Distance[k][i - 1] + 1,
+                            Distance[k - 1][i - 1] + Cost
+                        )
+                    end
+                end
+                
+                table.insert(SearchResults, 
+                    {
+                        Ratio = ((ComparisonStringLength + SearchStringLength) - Distance[Rows][Columns]) / (ComparisonStringLength + SearchStringLength),
+                        Word = ComparisonString
+                    }
+                )
+            else
+                table.insert(SearchResults,
+                    {
+                        Ratio = 0,
+                        Word = ComparisonString
+                    }
+                )
+            end
+        end
+        
+        table.sort(SearchResults, function(A, B)
+            return A.Ratio > B.Ratio
+        end)
+        
+        return SearchResults -- Returns in the format of { { Ratio, Word }, { Ratio, Word } }. A ratio of 1 means it completely matches and a ratio of 0 means nothing matches at all.
+    end
+
+    local function getAllTabs()
+        local tabs = {}
+        for _, tabFrame in ipairs(TabsLayoutFrame:GetChildren()) do
+            if tabFrame:IsA("Frame") then
+                local textButton = tabFrame:FindFirstChildOfClass("TextButton")
+                if textButton then
+                    table.insert(tabs, tabFrame)
+                end
+            end
+        end
+        return tabs
+    end
+
+    local function updateResults(text)
+        local searchText = text:lower()
+        local tabs = getAllTabs()
+
+        for _, tab in ipairs(tabs) do
+            local tabName = tab.TextLabel.Text:lower()
+            if searchText == "" or string.find(tabName, searchText, 1, true) then
+                print("showing tab:", tabName)
+                tab.Visible = true
+            else
+                print("hiding tab:", tabName)
+                tab.Visible = false
+            end
+        end
+    end
+
+
+    SearchBox:GetPropertyChangedSignal("Text"):Connect(function()
+        local searchText = SearchBox.Text
+        updateResults(searchText)
+    end)
+
+
     local UserInputService = game:GetService("UserInputService")
 
     local dragging = false
@@ -217,6 +376,13 @@ function Window.new(config)
         end
     end)
 
+    ImageButton.MouseButton1Click:Connect(function()
+        ScreenGui.Enabled = not ScreenGui.Enabled
+    end)
+
+    ImageButton_2.MouseButton1Click:Connect(function()
+        ScreenGui:Destroy()
+    end)
 
 
 

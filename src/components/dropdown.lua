@@ -1,6 +1,9 @@
 local Dropdown = {}
 Dropdown.__index = Dropdown
 
+local Shared = __require("shared")
+local Icons = Shared.Icons
+
 function Dropdown.new(window, tab, section, title, options, callback)
     local self = setmetatable({}, Dropdown)
 
@@ -107,13 +110,27 @@ function Dropdown.new(window, tab, section, title, options, callback)
 
     DropdownContent.Visible = false
 
+    local asset
+
     OpenCloseButton.MouseButton1Click:Connect(function()
         if DropdownContent.Visible == false then
             DropdownContent.Visible = true
             DropDown.Size = UDim2.new(0, 347, 0, 200)
+            asset = Icons.GetAsset("arrow-up", 48)
+            if asset then
+                ImageLabel.Image = asset.Url
+                ImageLabel.ImageRectOffset = asset.ImageRectOffset
+                ImageLabel.ImageRectSize = asset.ImageRectSize
+            end
         else
             DropdownContent.Visible = false
             DropDown.Size = UDim2.new(0, 347, 0, 80)
+            asset = Icons.GetAsset("arrow-down", 48)
+            if asset then
+                ImageLabel.Image = asset.Url
+                ImageLabel.ImageRectOffset = asset.ImageRectOffset
+                ImageLabel.ImageRectSize = asset.ImageRectSize
+            end
         end
     end)
 

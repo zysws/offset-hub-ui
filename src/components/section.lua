@@ -90,6 +90,7 @@ function Section.new(window, tab, name)
 
     local asset
 
+
     textButton.MouseButton1Click:Connect(function()
         self.Settings.Expanded = not self.Settings.Expanded
 
@@ -173,6 +174,7 @@ function Section.new(window, tab, name)
     self.Name = name
     self.Layout = Layout
     self.Settings = {}
+    self.Settings.Expanded = false
 
     function Section:AddCheckbox(...)
         local args = {...}
