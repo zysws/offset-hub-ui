@@ -205,6 +205,8 @@ function Window.new(config)
     TabsLayoutFrame.Selectable = false
     TabsLayoutFrame.Size = UDim2.new(0, 506, 0, 24)
     TabsLayoutFrame.ScrollBarThickness = 0
+    TabsLayoutFrame.ScrollingDirection = Enum.ScrollingDirection.X
+    TabsLayoutFrame.AutomaticCanvasSize = Enum.AutomaticSize.X
 
 
     

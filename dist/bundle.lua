@@ -263,7 +263,7 @@ function Dropdown.new(window, tab, section, title, options, callback)
     Frame.BorderSizePixel = 0
     Frame.Position = UDim2.new(0, 5, 0, 13)
     Frame.Selectable = false
-    Frame.Size = UDim2.new(0, 133, 0, 82)
+    Frame.Size = UDim2.new(0, 133, 0.87, 0)
     Frame.ScrollBarThickness = 0
     Frame.CanvasSize = UDim2.new(0, 0, 0, 0)
     Frame.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -1215,6 +1215,8 @@ function Window.new(config)
     TabsLayoutFrame.Selectable = false
     TabsLayoutFrame.Size = UDim2.new(0, 506, 0, 24)
     TabsLayoutFrame.ScrollBarThickness = 0
+    TabsLayoutFrame.ScrollingDirection = Enum.ScrollingDirection.X
+    TabsLayoutFrame.AutomaticCanvasSize = Enum.AutomaticSize.X
 
 
     
