@@ -1203,12 +1203,20 @@ function Window.new(config)
     Divider.Position = UDim2.new(0.23381187, 0, 0.0265865326, 0)
     Divider.Size = UDim2.new(0, -2, 0, 30)
 
-    local TabsLayoutFrame = Instance.new("Frame")
+    local TabsLayoutFrame = Instance.new("ScrollingFrame")
     TabsLayoutFrame.Name = "Layout"
-    TabsLayoutFrame.Parent = Tabs
-    TabsLayoutFrame.BackgroundTransparency = 1
-    TabsLayoutFrame.Position = UDim2.new(0.25, 0, 0.12, 0)
+    TabsLayoutFrame.Parent = game.StarterGui["library2"].MainFrame.Tabs
+    TabsLayoutFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    TabsLayoutFrame.BackgroundTransparency = 1.000
+    TabsLayoutFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+    TabsLayoutFrame.BorderSizePixel = 0
+    TabsLayoutFrame.Position = UDim2.new(0.252148986, 0, 0.120336533, 0)
+    TabsLayoutFrame.Selectable = false
     TabsLayoutFrame.Size = UDim2.new(0, 506, 0, 24)
+    TabsLayoutFrame.ScrollBarThickness = 0
+
+
+    
 
     local UIListLayout = Instance.new("UIListLayout")
     UIListLayout.Parent = TabsLayoutFrame
