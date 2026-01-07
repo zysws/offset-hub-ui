@@ -196,7 +196,7 @@ function Window.new(config)
 
     local TabsLayoutFrame = Instance.new("ScrollingFrame")
     TabsLayoutFrame.Name = "Layout"
-    TabsLayoutFrame.Parent = game.StarterGui["library2"].MainFrame.Tabs
+    TabsLayoutFrame.Parent = Tabs
     TabsLayoutFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     TabsLayoutFrame.BackgroundTransparency = 1.000
     TabsLayoutFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
