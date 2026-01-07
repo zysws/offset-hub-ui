@@ -54,7 +54,7 @@ function Button.new(window, tab, section, title, callback)
     TextLabel.Position = UDim2.new(0.140950054, 0, 0.187648401, 0)
     TextLabel.Size = UDim2.new(0.672972083, 0, 0.607843161, 0)
     TextLabel.Font = Enum.Font.Cartoon
-    TextLabel.Text = "Button"
+    TextLabel.Text = title
     TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     TextLabel.TextScaled = true
     TextLabel.TextSize = 14.000
